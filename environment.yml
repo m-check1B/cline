@@ -1,0 +1,12 @@
+name: cline-boss-agent
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.9
+  - websockets=10.4
+  - python-dotenv=0.19.2
+  - openai=0.27.0
+  - pip
+  - pip:
+    - vscode==1.1.37

@@ -1,0 +1,5 @@
+{
+    "openai_model": "gpt-3.5-turbo",
+    "cline_boss_url": "ws://localhost:8765",
+    "log_level": "INFO"
+}

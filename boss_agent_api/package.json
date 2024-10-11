@@ -1,0 +1,61 @@
+{
+  "name": "boss-cline-agent-api",
+  "displayName": "Boss Cline Agent API",
+  "description": "API layer for interconnecting Cline extension with an agentic framework",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:bossClineAgentApi.connectToServer",
+    "onView:bossAgentWebview"
+  ],
+  "main": "./main.py",
+  "contributes": {
+    "commands": [
+      {
+        "command": "bossClineAgentApi.connectToServer",
+        "title": "Boss Cline Agent API: Connect to Server"
+      },
+      {
+        "command": "bossClineAgentApi.openWebview",
+        "title": "Boss Agent: Open Webview"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "boss-agent",
+          "title": "Boss Agent",
+          "icon": "assets/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "boss-agent": [
+        {
+          "type": "webview",
+          "id": "bossAgentWebview",
+          "name": "Boss Agent"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Boss Cline Agent API",
+      "properties": {
+        "bossClineAgentApi.serverUrl": {
+          "type": "string",
+          "default": "ws://localhost:8765",
+          "description": "WebSocket URL for the agentic framework server"
+        }
+      }
+    }
+  },
+  "scripts": {},
+  "devDependencies": {
+    "@types/vscode": "^1.60.0"
+  }
+}

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boss Agent</title>
+    <style>
+        body {
+            font-family: var(--vscode-font-family);
+            padding: 10px;
+            color: var(--vscode-foreground);
+        }
+        #goal-input {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            background-color: var(--vscode-input-background);
+            color: var(--vscode-input-foreground);
+            border: 1px solid var(--vscode-input-border);
+            padding: 5px;
+        }
+        button {
+            background-color: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        button:hover {
+            background-color: var(--vscode-button-hoverBackground);
+        }
+        #result {
+            white-space: pre-wrap;
+            background-color: var(--vscode-editor-background);
+            color: var(--vscode-editor-foreground);
+            padding: 10px;
+            border: 1px solid var(--vscode-panel-border);
+            margin-top: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .task {
+            margin-bottom: 10px;
+            padding: 5px;
+            background-color: var(--vscode-editor-lineHighlightBackground);
+        }
+        .task-header {
+            font-weight: bold;
+        }
+        .task-result {
+            margin-top: 5px;
+            padding-left: 10px;
+        }
+        #history {
+            margin-top: 20px;
+        }
+        .history-item {
+            cursor: pointer;
+            padding: 5px;
+            margin-bottom: 5px;
+            background-color: var(--vscode-editor-lineHighlightBackground);
+        }
+        .history-item:hover {
+            background-color: var(--vscode-list-hoverBackground);
+        }
+    </style>
+</head>
+<body>
+    <h1>Boss Agent</h1>
+    <textarea id="goal-input" placeholder="Enter your coding goal here..."></textarea>
+    <button id="submit-btn">Process Goal</button>
+    <button id="cancel-btn" style="display: none;">Cancel</button>
+    <div id="result"></div>
+    <div id="history">
+        <h2>Goal History</h2>
+        <div id="history-list"></div>
+    </div>
+
+    <script>
+        const vscode = acquireVsCodeApi();
+        const goalInput = document.getElementById('goal-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const resultDiv = document.getElementById('result');
+        const historyList = document.getElementById('history-list');
+
+        let isProcessing = false;
+
+        submitBtn.addEventListener('click', () => {
+            const goal = goalInput.value;
+            if (goal.trim() === '') {
+                vscode.postMessage({
+                    command: 'showError',
+                    message: 'Please enter a coding goal.'
+                });
+                return;
+            }
+            isProcessing = true;
+            updateButtonState();
+            resultDiv.innerHTML = 'Processing...';
+            vscode.postMessage({
+                command: 'processGoal',
+                goal: goal
+            });
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            vscode.postMessage({
+                command: 'cancelGoal'
+            });
+        });
+
+        function updateButtonState() {
+            submitBtn.disabled = isProcessing;
+            cancelBtn.style.display = isProcessing ? 'inline-block' : 'none';
+        }
+
+        window.addEventListener('message', event => {
+            const message = event.data;
+            switch (message.type) {
+                case 'result':
+                    displayResult(message.content);
+                    isProcessing = false;
+                    updateButtonState();
+                    break;
+                case 'error':
+                    resultDiv.textContent = `Error: ${message.content}`;
+                    isProcessing = false;
+                    updateButtonState();
+                    break;
+                case 'history':
+                    updateHistory(message.content);
+                    break;
+            }
+        });
+
+        function displayResult(content) {
+            resultDiv.innerHTML = '';
+            const tasks = JSON.parse(content);
+            tasks.forEach((task, index) => {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'task';
+                taskElement.innerHTML = `
+                    <div class="task-header">Task ${index + 1}: ${task.command}</div>
+                    <div class="task-result">${JSON.stringify(task.result, null, 2)}</div>
+                `;
+                resultDiv.appendChild(taskElement);
+            });
+        }
+
+        function updateHistory(history) {
+            historyList.innerHTML = '';
+            history.forEach((item, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.textContent = `${index + 1}. ${item.goal.substring(0, 50)}...`;
+                historyItem.addEventListener('click', () => {
+                    goalInput.value = item.goal;
+                    displayResult(JSON.stringify(item.result));
+                });
+                historyList.appendChild(historyItem);
+            });
+        }
+
+        // Request initial history
+        vscode.postMessage({
+            command: 'getHistory'
+        });
+    </script>
+</body>
+</html>
