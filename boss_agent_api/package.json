@@ -23,6 +23,14 @@
       {
         "command": "bossClineAgentApi.openWebview",
         "title": "Boss Agent: Open Webview"
+      },
+      {
+        "command": "bossClineAgentApi.cancelGoal",
+        "title": "Boss Agent: Cancel Current Goal"
+      },
+      {
+        "command": "bossClineAgentApi.runTests",
+        "title": "Boss Agent: Run Tests"
       }
     ],
     "viewsContainers": {

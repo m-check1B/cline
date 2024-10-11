@@ -1,43 +1,80 @@
-# Boss Agent API (VS Code Extension)
+# Boss Agent API
 
-This VS Code extension serves as an intermediary between the Cline VS Code extension and the Boss Agent. It provides an API layer that allows the Boss Agent to control and interact with the Cline extension, enabling more advanced AI-assisted coding capabilities.
+The Boss Agent API is a VS Code extension that serves as an intermediary between the Cline extension and an AI-powered agent, providing advanced coding assistance.
 
 ## Features
 
-- Connects to the Boss Agent via WebSocket
-- Translates Boss Agent commands into Cline extension actions
-- Provides an API for project analysis, code generation, refactoring, and more
-- Handles asynchronous communication between the Boss Agent and Cline extension
+- Process coding goals using AI
+- Interact with the Cline extension to perform coding tasks
+- Display results in a user-friendly webview
+- Maintain a history of processed goals
+- Cancel ongoing goal processing
+- Manage Cline extension context and history
 
-## Setup
+## Installation
 
-1. Ensure you have the Cline VS Code extension installed.
-2. Install this Boss Agent API extension in VS Code.
-3. Configure the extension settings:
-   - `clineBossAgentApi.serverUrl`: WebSocket URL for connecting to the Boss Agent (default: ws://localhost:8765)
+1. Install the Cline extension in VS Code.
+2. Install this Boss Agent API extension.
+3. Configure the extension settings (see Configuration section).
 
 ## Usage
 
-This extension works in the background and doesn't require direct user interaction. It automatically connects to the Boss Agent when activated and listens for commands.
+1. Open the Boss Agent webview from the VS Code activity bar.
+2. Enter your coding goal in the input field.
+3. Click "Process Goal" to start processing.
+4. View the results in the webview.
+5. Use the goal history to revisit previous goals and their results.
 
-## API Endpoints
+## Configuration
 
-The Boss Agent API exposes the following endpoints:
+Configure the following settings in VS Code:
 
-- `analyze_project`: Analyze the current project structure and codebase
-- `generate_code`: Generate code based on a given prompt
-- `refactor_code`: Refactor code in a specified file
-- `suggest_improvements`: Suggest improvements for a given file
-- `run_tests`: Run tests for the project or a specific module
-- `create_file`, `read_file`, `update_file`, `delete_file`: File operations
-- `search_and_replace`: Perform project-wide search and replace
+- `bossClineAgentApi.serverUrl`: WebSocket URL for the agentic framework server (default: ws://localhost:8765)
 
-## Troubleshooting
+## Commands
 
-If you encounter issues:
+- `Boss Cline Agent API: Connect to Server`: Manually connect to the WebSocket server
+- `Boss Agent: Open Webview`: Open the Boss Agent webview
+- `Boss Agent: Cancel Current Goal`: Cancel the currently processing goal
+- `Boss Agent: Run Tests`: Run the test suite for the Boss Agent API
 
-1. Check the VS Code output panel for logs (select "Boss Agent API" from the dropdown)
-2. Ensure the Boss Agent is running and accessible at the configured WebSocket URL
-3. Verify that the Cline extension is properly installed and activated
+## Cline Extension Integration
 
-For more detailed information, refer to the main project README.
+The Boss Agent API now provides deeper integration with the Cline extension:
+
+- Get and set Cline context
+- Retrieve and clear Cline history
+- Perform Cline-specific actions like code generation, refactoring, and improvement suggestions
+
+For detailed information on these interactions, refer to the `vscode_bridge.py` file.
+
+## Development
+
+To set up the development environment:
+
+1. Clone the repository.
+2. Run `npm install` to install dependencies.
+3. Open the project in VS Code.
+4. Press F5 to start debugging the extension.
+
+## Testing
+
+Refer to the [TESTING.md](./TESTING.md) file for detailed information on running tests, known limitations, and edge cases.
+
+## Error Handling
+
+The Boss Agent API implements error handling at various levels:
+
+- WebSocket connection errors
+- Command execution errors
+- Cline extension interaction errors
+
+Errors are logged and, where appropriate, displayed to the user via VS Code's information/error messages.
+
+## Contributing
+
+Contributions are welcome! Please read our contributing guidelines before submitting pull requests.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
